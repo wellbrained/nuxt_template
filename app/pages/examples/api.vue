@@ -28,7 +28,7 @@ async function onSubmit(event: FormSubmitEvent<TodoCreate>) {
     await refresh()
   } catch (error) {
     // Server-side validation errors land here (status 400)
-    toast.add({ title: 'Could not add todo', description: String(error), color: 'error' })
+    toast.add({ title: 'Could not add todo', description: getErrorMessage(error), color: 'error' })
   }
 }
 

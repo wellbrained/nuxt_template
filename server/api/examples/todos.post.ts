@@ -1,9 +1,9 @@
 import { todoCreateSchema } from '#shared/schemas/todo'
 
 // POST /api/examples/todos — validates the body with the shared Zod schema.
-// Invalid input automatically returns a 400 with the validation issues.
+// readZodBody (server/utils/validation.ts) returns a 400 with `{ issues: [{ path, message }] }`.
 export default defineEventHandler(async (event) => {
-  const { title } = await readValidatedBody(event, todoCreateSchema.parse)
+  const { title } = await readZodBody(event, todoCreateSchema)
 
   setResponseStatus(event, 201)
   return addExampleTodo(title)
