@@ -8,9 +8,6 @@ useHead({
   link: [
     { rel: 'icon', href: '/favicon.ico' }
   ],
-  htmlAttrs: {
-    lang: 'en'
-  },
   titleTemplate: title => title && title !== site.name ? `${title} · ${site.name}` : site.name
 })
 
@@ -24,26 +21,8 @@ useSeoMeta({
 
 <template>
   <UApp>
-    <UHeader :title="site.name">
-      <template #title>
-        <AppLogo class="w-auto h-6 shrink-0" />
-      </template>
-
-      <template #right>
-        <UColorModeButton />
-      </template>
-    </UHeader>
-
-    <UMain>
+    <NuxtLayout>
       <NuxtPage />
-    </UMain>
-
-    <UFooter>
-      <template #left>
-        <p class="text-sm text-muted">
-          © {{ new Date().getFullYear() }} {{ site.name }}
-        </p>
-      </template>
-    </UFooter>
+    </NuxtLayout>
   </UApp>
 </template>
