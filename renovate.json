@@ -1,4 +1,23 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>nuxt/renovate-config-nuxt"]
+  "extends": ["github>nuxt/renovate-config-nuxt"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "pnpm version in devEngines.packageManager (package.json) — not detected by Renovate's npm manager",
+      "managerFilePatterns": ["/^package\\.json$/"],
+      "matchStrings": [
+        "\"devEngines\":\\s*\\{\\s*\"packageManager\":\\s*\\{\\s*\"name\":\\s*\"pnpm\",\\s*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "pnpm",
+      "datasourceTemplate": "npm"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Update pnpm in packageManager and devEngines in the same PR",
+      "matchDepNames": ["pnpm"],
+      "groupName": "pnpm"
+    }
+  ]
 }

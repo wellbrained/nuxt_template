@@ -15,6 +15,7 @@ Run lint, typecheck and test before considering a change done.
 ## Conventions
 
 - Use **pnpm** only (enforced via `devEngines`). Never create `package-lock.json` or `yarn.lock`.
+- The pnpm version appears twice in `package.json` (`packageManager` and `devEngines.packageManager.version`) — keep them equal; Renovate updates both in one PR (custom manager in `renovate.json`). The Node version lives only in `.nvmrc` (CI reads it via `node-version-file`).
 - Keep `vue` and `vue-router` as direct dependencies — otherwise pnpm can install two Vue copies, which breaks rendering (blank page).
 - Source lives in `app/` (Nuxt 4 layout). Server code in `server/`. Code used by both goes in `shared/` (import via `#shared/...`).
 - Site name/description and theme colors: `app/app.config.ts` (`useAppConfig().site`). Don't hardcode the project name.
