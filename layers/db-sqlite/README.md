@@ -8,6 +8,8 @@
 
 > Keep **either** this layer **or** `layers/db-postgres` in a real project.
 
+The example uses `readZodBody()` / `getErrorMessage()` from the base template (`server/utils/validation.ts`, `app/utils/errors.ts`).
+
 better-sqlite3 ships prebuilt binaries for Windows, macOS and Linux (x64/arm64), so nothing is compiled. Its build script stays disabled in `pnpm-workspace.yaml` on purpose — enabling it would trigger a native compile that needs a C++ toolchain.
 
 ## Files

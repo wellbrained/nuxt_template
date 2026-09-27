@@ -19,6 +19,7 @@ interface PostgresClient {
   db: PostgresDb
   driver: 'postgres' | 'pglite'
   migrate: (migrationsFolder: string) => Promise<void>
+  close: () => Promise<void>
 }
 
 let client: PostgresClient | undefined
@@ -28,14 +29,26 @@ function createClient(): PostgresClient {
 
   // Real PostgreSQL server when NUXT_POSTGRES_URL is set
   if (url) {
-    const db = drizzlePostgres(postgres(url), { schema })
-    return { db, driver: 'postgres', migrate: migrationsFolder => migratePostgres(db, { migrationsFolder }) }
+    const sql = postgres(url)
+    const db = drizzlePostgres(sql, { schema })
+    return {
+      db,
+      driver: 'postgres',
+      migrate: migrationsFolder => migratePostgres(db, { migrationsFolder }),
+      close: () => sql.end()
+    }
   }
 
   // Otherwise embedded PGlite — same SQL dialect, zero setup
   mkdirSync(pgliteDir, { recursive: true })
-  const db = drizzlePglite(new PGlite(pgliteDir), { schema })
-  return { db, driver: 'pglite', migrate: migrationsFolder => migratePglite(db, { migrationsFolder }) }
+  const pglite = new PGlite(pgliteDir)
+  const db = drizzlePglite(pglite, { schema })
+  return {
+    db,
+    driver: 'pglite',
+    migrate: migrationsFolder => migratePglite(db, { migrationsFolder }),
+    close: () => pglite.close()
+  }
 }
 
 function getClient(): PostgresClient {
@@ -56,4 +69,15 @@ export function usePostgresDriver(): PostgresClient['driver'] {
 /** Applies pending migrations from the given folder (see server/plugins/postgres.ts). */
 export function migratePostgresDb(migrationsFolder: string): Promise<void> {
   return getClient().migrate(migrationsFolder)
+}
+
+/**
+ * Closes the connection (called when the server shuts down, see server/plugins/postgres.ts).
+ * Important for PGlite: in dev, Nitro replaces its worker on every reload — an unclosed
+ * instance keeps the data directory busy and requests in the new worker can hang.
+ */
+export async function closePostgresDb(): Promise<void> {
+  const current = client
+  client = undefined
+  await current?.close()
 }

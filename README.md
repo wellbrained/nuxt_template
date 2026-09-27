@@ -48,6 +48,8 @@ pnpm build && pnpm preview
 | Fonts (`@nuxt/fonts`, opt-in Inter) | `/examples/fonts` |
 | Pinia store *(layer)* | `/examples/pinia` |
 | i18n translations *(layer)* | `/examples/i18n` |
+| PostgreSQL + Drizzle *(layer)* | `/examples/postgres` |
+| SQLite + Drizzle *(layer)* | `/examples/sqlite` |
 
 Each example page lists its source files at the top. Tooling: Vitest + `@nuxt/test-utils`, ESLint, CI (lint, typecheck, test, build), Renovate, VS Code settings, `CLAUDE.md`.
 
@@ -64,8 +66,8 @@ app/
   error.vue               404 / error page
 server/
   api/                    API routes (file suffix = HTTP method: todos.get.ts, todos.post.ts)
-  utils/                  auto-imported server helpers
-shared/                   code for app AND server (import via #shared/...)
+  utils/                  auto-imported server helpers (readZodBody for validated request bodies)
+shared/                   code for app AND server (import via #shared/...; shared/types is auto-imported)
 layers/                   optional features, auto-registered (pinia, i18n)
 test/unit/                plain unit tests (node)
 test/nuxt/                tests in a Nuxt environment (components, composables)
@@ -79,6 +81,10 @@ Everything in `layers/` is a [Nuxt layer](https://nuxt.com/docs/getting-started/
 |---|---|---|
 | `layers/pinia` | Pinia stores (`app/stores/`, auto-imported) | `pnpm remove pinia @pinia/nuxt` + delete folder |
 | `layers/i18n` | `@nuxtjs/i18n` (en/de), language switcher in the header | `pnpm remove @nuxtjs/i18n` + delete folder |
+| `layers/db-postgres` | Drizzle + PostgreSQL (`usePostgres()`); embedded PGlite until `NUXT_POSTGRES_URL` is set | see its README |
+| `layers/db-sqlite` | Drizzle + better-sqlite3 (`useSqlite()`), one database file | see its README |
+
+Keep **one** database layer per project. Each has `pnpm db:<postgres|sqlite>:generate | migrate | studio` scripts; migrations are applied automatically on server start.
 
 To add a layer to an existing project: copy its folder and install the packages listed in its README.
 

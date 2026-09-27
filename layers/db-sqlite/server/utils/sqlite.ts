@@ -13,6 +13,7 @@ export const sqliteTables = schema
 export type SqliteDb = BetterSQLite3Database<typeof schema>
 
 let db: SqliteDb | undefined
+let connection: Database.Database | undefined
 
 /** Drizzle instance for the SQLite database file. */
 export function useSqlite(): SqliteDb {
@@ -20,12 +21,12 @@ export function useSqlite(): SqliteDb {
     const { path } = useRuntimeConfig().sqlite
     mkdirSync(dirname(path), { recursive: true })
 
-    const sqlite = new Database(path)
+    connection = new Database(path)
     // WAL mode: readers don't block writers — recommended for web servers
-    sqlite.pragma('journal_mode = WAL')
-    sqlite.pragma('foreign_keys = ON')
+    connection.pragma('journal_mode = WAL')
+    connection.pragma('foreign_keys = ON')
 
-    db = drizzle(sqlite, { schema })
+    db = drizzle(connection, { schema })
   }
   return db
 }
@@ -33,4 +34,11 @@ export function useSqlite(): SqliteDb {
 /** Applies pending migrations from the given folder (see server/plugins/sqlite.ts). */
 export function migrateSqliteDb(migrationsFolder: string): void {
   migrate(useSqlite(), { migrationsFolder })
+}
+
+/** Closes the database file (called when the server shuts down, see server/plugins/sqlite.ts). */
+export function closeSqliteDb(): void {
+  connection?.close()
+  connection = undefined
+  db = undefined
 }

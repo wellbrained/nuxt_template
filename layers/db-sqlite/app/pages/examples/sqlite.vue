@@ -89,7 +89,12 @@ async function removeNote(id: number) {
             <div>
               <p>{{ note.text }}</p>
               <p class="text-xs text-muted">
-                #{{ note.id }} · {{ new Date(note.createdAt).toLocaleString() }}
+                <!-- NuxtTime: formats dates without server/browser locale mismatches -->
+                #{{ note.id }} · <NuxtTime
+                  :datetime="note.createdAt"
+                  date-style="medium"
+                  time-style="short"
+                />
               </p>
             </div>
             <UButton

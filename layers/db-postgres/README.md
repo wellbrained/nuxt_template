@@ -8,6 +8,8 @@
 
 > Keep **either** this layer **or** `layers/db-sqlite` in a real project.
 
+The example uses `readZodBody()` / `getErrorMessage()` from the base template (`server/utils/validation.ts`, `app/utils/errors.ts`).
+
 ## Files
 
 | File | Purpose |

@@ -21,7 +21,8 @@ Run lint, typecheck and test before considering a change done.
 - Header/footer shell: `app/layouts/default.vue`; other layouts in `app/layouts/`, selected with `definePageMeta({ layout })`.
 - Prefer Nuxt UI components (`U*`) and semantic color classes (`text-muted`, `bg-elevated`, `text-primary`, …) over raw Tailwind colors, so light/dark mode keeps working.
 - Icons: `i-lucide-*` (and `i-simple-icons-*` for brands).
-- Forms: `UForm` + Zod schema (`import * as z from 'zod'`). Reuse the same schema in API routes via `readValidatedBody(event, schema.parse)`.
+- Forms: `UForm` + Zod schema (`import * as z from 'zod'`). Validate request bodies in API routes with `readZodBody(event, schema)` (server/utils/validation.ts) — it returns a 400 with `{ issues: [{ path, message }] }`. On the client, show errors with `getErrorMessage(error)` (app/utils/errors.ts).
+- Dates in templates: use `<NuxtTime>` instead of `toLocaleString()` (server and browser locales differ → hydration mismatch).
 - Data fetching: `useFetch` for page data (SSR), `$fetch` for user actions.
 - Env config: add keys to `runtimeConfig` in `nuxt.config.ts` and to `.env.example` (`NUXT_*`, `NUXT_PUBLIC_*`).
 - Images: `<NuxtImg>` / `<NuxtPicture>` from `@nuxt/image`.
@@ -34,6 +35,7 @@ Run lint, typecheck and test before considering a change done.
 
 - `layers/pinia` – Pinia; stores in `app/stores/` or `layers/pinia/app/stores/` are auto-imported.
 - `layers/i18n` – `@nuxtjs/i18n`, `no_prefix` strategy, locales in `layers/i18n/i18n/locales/`. Keep all locale files in sync (a unit test checks the keys).
+- `layers/db-postgres` – Drizzle + Postgres via `usePostgres()` / `pgTables` (PGlite when `NUXT_POSTGRES_URL` is empty). `layers/db-sqlite` – Drizzle + better-sqlite3 via `useSqlite()` / `sqliteTables`. A project keeps one of them. After schema changes run `pnpm db:<postgres|sqlite>:generate` and commit the migration. Never enable better-sqlite3 in `allowBuilds` (it ships prebuilt binaries; building needs a C++ toolchain).
 - Layers must stay removable: the base app must not import from a layer. Layers can contribute header actions via global components (see `optionalHeaderActions` in `app/layouts/default.vue`) and examples via `definePageMeta({ example })`.
 
 ## Examples
