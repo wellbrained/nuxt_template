@@ -18,6 +18,11 @@
       "description": "Update pnpm in packageManager and devEngines in the same PR",
       "matchDepNames": ["pnpm"],
       "groupName": "pnpm"
+    },
+    {
+      "description": "Hold TypeScript below 7: typescript-eslint (lint) and vue-tsc (typecheck) don't support the Go-based TS 7 yet (typescript-eslint tracks support for 7.1). Remove this rule once both support it.",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<7"
     }
   ]
 }
