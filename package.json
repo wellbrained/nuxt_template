@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
-    "@iconify-json/lucide": "^1.2.136",
+    "@iconify-json/lucide": "^1.2.137",
     "@iconify-json/simple-icons": "^1.2.97",
     "@nuxt/image": "^2.1.0",
     "@nuxt/ui": "^4.11.2",
